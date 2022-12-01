@@ -5,8 +5,10 @@
 
     <StackLayout >
         <StackLayout >
-            <Button x:Name="loadbtn" Text="Завантажити" Clicked="Button_Clicked"></Button>
-            <Editor x:Name="theeditor" Completed="Editor_Completed" Keyboard="Numeric"></Editor>
+            <Button x:Name="loadbtn" Text="Завантажити" Clicked="loadbtn_Clicked"></Button>
+            
+            <Editor x:Name="eeditor" Completed="eeditor_Completed"/>
+            
             <Grid >
                 <Grid.RowDefinitions>
                     <RowDefinition Height= "40"></RowDefinition>
@@ -16,14 +18,14 @@
                     <ColumnDefinition Width ="120*"/>
                     <ColumnDefinition Width ="35*"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="ioBtn" Clicked="ioBtn_Clicked"  Grid.Column="0" Text="I/0" Padding ="-1"></Button>
-                <Button x:Name="snNameButton" Clicked="snNameButton_Clicked" Grid.Column="1" Text="Назва/серійний №"></Button>
+                <Button x:Name="IoBtn" Clicked="IoBtn_Clicked"  Grid.Column="0" Text="I/0" Padding ="-1"></Button>
+                <Button x:Name="SnNameButton" Clicked="SnNameButton_Clicked" Grid.Column="1" Text="Назва/серійний №"></Button>
                 <Button x:Name ="departmentBtn" Grid.Column="2" Text="Відділ" Padding ="-1"></Button>
             </Grid>
         </StackLayout>
 
 
-        <ListView SelectionMode="None"  x:Name="listvw"  ItemsSource="{Binding allItems}" HasUnevenRows="True" SeparatorColor="LightGray">
+        <ListView  SelectionMode="None"  x:Name="listvw"  ItemsSource="{Binding AllItems}" HasUnevenRows="True" SeparatorColor="LightGray">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -40,10 +42,10 @@
                             </Grid.ColumnDefinitions>
                             <StackLayout Grid.Column="1">
                                 <Label Text="{Binding Nameof}" TextColor="Ivory"  Padding="0" />
-                                <Label Text="{Binding ident}" Padding="0" TextColor="Wheat" FontAttributes="Bold"/>
+                                <Label Text="{Binding Ident}" Padding="0" TextColor="Wheat" FontAttributes="Bold"/>
                             </StackLayout>
-                            <BoxView Grid.Column="0" Color="LightGreen" IsVisible="{Binding ispresent}"/>
-                            <Label Grid.Column="2" Text="{Binding department}"   Padding="-2"/>
+                            <BoxView Grid.Column="0" Color="LightGreen" IsVisible="{Binding IsPresent}"/>
+                            <Label Grid.Column="2" Text="{Binding Department}"   Padding="-2"/>
                         </Grid>
                         
 

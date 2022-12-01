@@ -13,129 +13,130 @@ namespace RediskaUNT_KroShu
 {
     public partial class MainPage : ContentPage
     {
-
-        List<Equipment> list = new List<Equipment>();
         
-        int sortTypeByName;
-        bool iosorting = true;
-
-
-        public ObservableCollection<Equipment> allItems { get; set; }
+        private int _sortTypeByName;
+        bool Iosorting = true;
+        public ObservableCollection<Equipment> AllItems { get; set; } = new ObservableCollection<Equipment>();
         public MainPage()
         {
             InitializeComponent();
-
+            BindingContext = this;
         }
-        public void shitdontwork(List<Equipment> equipments)
-        {
-            allItems = new ObservableCollection<Equipment>(equipments);
-            listvw.ItemsSource = allItems;
-        }
+      
         public class Equipment
         {
-            public string ident { get; set; }
+            public string Ident { get; set; }
             public string Nameof { get; set; }
-            public string department { get; set; }
-            public bool ispresent { get; set; }
+            public string Department { get; set; }
+            public bool IsPresent { get; set; }
+        }
+
+        
+       
+        private async void SnNameButton_Clicked(object sender, EventArgs e)
+        {
+            var OrderedList = new List<Equipment>();
+            switch (_sortTypeByName)
+            {
+                case 0:
+                    OrderedList = (AllItems.OrderBy(x => x.Nameof)).ToList<Equipment>();
+                    break;
+                case 1:
+                    OrderedList=(AllItems.OrderByDescending(x => x.Nameof)).ToList<Equipment>();
+                    break;
+                case 2:
+                    OrderedList=(AllItems.OrderBy(x => x.Ident)).ToList<Equipment>();
+                    break;
+                case 3:
+                    OrderedList=(AllItems.OrderByDescending(x => x.Ident)).ToList<Equipment>();
+                    break;
+            }
+            _sortTypeByName++;
+            if (_sortTypeByName == 4) { _sortTypeByName = 0; }
+
+            AllItems.Clear();
+            OrderedList.ForEach(x => AllItems.Add(x));
 
         }
 
-        private async void Button_Clicked(object sender, EventArgs e)
+      
+        private void IoBtn_Clicked(object sender, EventArgs e)
         {
-            try
+
+        }
+
+        private async void loadbtn_Clicked(object sender, EventArgs e)
+        {
             {
-                
-                var result = await FilePicker.PickAsync();
-
-              
-                var enumLines = File.ReadLines(result.FullPath, Encoding.UTF8);
-              
-
-                    foreach (var line in enumLines)
+                try
                 {
-                    string [] parts = line.Split(';');
-                    Equipment equipment = new Equipment();
-                    equipment.ident = parts[0];
-                    equipment.Nameof = parts[1];
-                    equipment.department = parts[2];
-                    equipment.ispresent = bool.Parse(parts[3]);
                     
-                    list.Add(equipment);
+                    var result = await FilePicker.PickAsync();
+                    var enumLines = File.ReadLines(result.FullPath, Encoding.UTF8);
+                    foreach (var line in enumLines)
+
+                    {
+                        string[] parts = line.Split(';');
+                        Equipment equipment = new Equipment();
+                        equipment.Ident = parts[0];
+                        equipment.Nameof = parts[1];
+                        equipment.Department = parts[2];
+                        equipment.IsPresent = bool.Parse(parts[3]);
+
+                       
+
+                        AllItems.Add(equipment);
+                       
+                    }
+                   
+                    var AskForAuditorName = DisplayPromptAsync("Так, так, так. Хто тут у нас?", "Введіть свій логін ");
+                    
+                    AskForAuditorName.Start();
+                    string AuditorName = AskForAuditorName.Result;
+                    
+                    
+                }
+
+                catch (Exception)
+                {
 
                 }
-                shitdontwork(list);
+                
 
             }
-            catch (Exception)
-            {
-                loadbtn.Text = "Помилка завантаження";
-            }
-            
         }
 
-        private void snNameButton_Clicked(object sender, EventArgs e)
-        {
-            if (sortTypeByName == 0)
-            {
-                list = new List<Equipment>(allItems.OrderBy(x => x.Nameof));
-                
-               
-                shitdontwork(list);
-            }
-            if (sortTypeByName == 1)
-            {
-                list = new List<Equipment>(allItems.OrderByDescending(x => x.Nameof));
-                
-                
-                shitdontwork(list);
-            }
-            if (sortTypeByName == 2)
-            {
-                list = new List<Equipment>(allItems.OrderBy(x => x.ident));
-               
-                
-                shitdontwork(list);
-            }
-            if (sortTypeByName == 3)
-            {
-                list = new List<Equipment>(allItems.OrderByDescending(x => x.ident));
-                
-                
-                shitdontwork(list);
-            }
-            sortTypeByName++;
-            if (sortTypeByName == 4) { sortTypeByName = 0; }
-            
-
-        }
-
-        private void Editor_Completed(object sender, EventArgs e)
+        private void eeditor_Completed(object sender, EventArgs e)
         {
             try
             {
-                var indx = allItems.First(i => i.ident == theeditor.Text);
-                int indexx = allItems.IndexOf(indx);
-                allItems[indexx].ispresent = true;
-                list = new List<Equipment>(allItems);
+                AllItems.Reverse();
+                var indx = AllItems.First(i => i.Ident == eeditor.Text);
+                int indexx = AllItems.IndexOf(indx);
+                string Namee = AllItems[indexx].Nameof;
+                string Identt = AllItems[indexx].Ident;
+                string Department = AllItems[indexx].Department;
+                AllItems.RemoveAt(indexx);
+                Equipment eq = new Equipment();
+                eq.IsPresent = true;
+                eq.Nameof = Namee;
+                eq.Department = Department;
+                eq.Ident = Identt;
+                AllItems.Add(eq);
+                AllItems.Reverse();
 
 
-                shitdontwork(list);
+
 
             }
-            
             catch
             {
-                if (theeditor.Text != null)
+                if (eeditor.Text != "") ;
                 {
                     DisplayAlert("Cталася помилка", "Чого? Чому? Навіщо? Відповідей на це питання ми не дізнаємось ніколи, але такого серійника я в списку не знайшов", "Ну і не особливо хотілося");
                 }
             }
-            theeditor.Text = "";
-        }
-
-        private void ioBtn_Clicked(object sender, EventArgs e)
-        {
-            bool iosorting 
+            eeditor.Text = "";
         }
     }
 }
